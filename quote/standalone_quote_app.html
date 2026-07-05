@@ -543,7 +543,7 @@
 
   <script>
     (function () {
-      var STORAGE_KEY = "easyone_platform_standalone_quote_v1";
+      var STORAGE_KEY = "easyone_platform_standalone_quote_v2";
       var defaultItems = [
         "숏폼, 릴스, 클립, 당근스토리 영상게시",
         "유튜브, 틱톡 영상게시 및 라이브커머스",
@@ -621,6 +621,17 @@
           refs.validUntil.value = formatDate(valid);
         }
         if (forceNumber || !refs.quoteNo.value) refs.quoteNo.value = generateQuoteNo(now);
+      }
+
+      function ensureQuoteNoFormat() {
+        if (!refs.quoteNo.value || refs.quoteNo.value.indexOf("EOP-") !== 0) {
+          refs.quoteNo.value = generateQuoteNo(new Date());
+        }
+      }
+
+      function getPrintTitle() {
+        var quoteNo = refs.quoteNo.value || generateQuoteNo(new Date());
+        return "이지원플랫폼 견적서_" + quoteNo;
       }
 
       function renumberRows() {
@@ -789,6 +800,7 @@
             }
           }
           setDefaultMeta(false);
+          ensureQuoteNoFormat();
           calculateAll();
           return true;
         } catch (error) {
@@ -863,7 +875,7 @@
         }
         clone.style.padding = "0";
         clone.style.background = "#ffffff";
-        return "<!DOCTYPE html><html lang='ko'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>이지원플랫폼 견적서</title>" + styleHtml + "<style>html,body{margin:0;padding:0;background:#ffffff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}body{min-height:auto;font-family:\"Pretendard\",\"Malgun Gothic\",sans-serif;}#easyoneQuoteApp{padding:0 !important;background:#ffffff !important;}.quote-shell{max-width:none !important;margin:0 !important;box-shadow:none !important;}table{min-width:0 !important;}tbody tr:hover td{background:inherit !important;}</style></head><body>" + clone.outerHTML + "</body></html>";
+        return "<!DOCTYPE html><html lang='ko'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>" + getPrintTitle() + "</title>" + styleHtml + "<style>html,body{margin:0;padding:0;background:#ffffff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}body{min-height:auto;font-family:\"Pretendard\",\"Malgun Gothic\",sans-serif;}#easyoneQuoteApp{padding:0 !important;background:#ffffff !important;}.quote-shell{max-width:none !important;margin:0 !important;box-shadow:none !important;}table{min-width:0 !important;}tbody tr:hover td{background:inherit !important;}</style></head><body>" + clone.outerHTML + "</body></html>";
       }
 
       function printQuote() {
@@ -902,6 +914,11 @@
         for (var i = 0; i < defaultItems.length; i++) createRow(defaultItems[i], "", "");
         calculateAll();
       }
+      ensureQuoteNoFormat();
+      document.title = getPrintTitle();
+      refs.quoteNo.addEventListener("input", function () {
+        document.title = getPrintTitle();
+      });
     })();
   </script>
 </body>

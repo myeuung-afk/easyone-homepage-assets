@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>이지원플랫폼 자동 견적서</title>
+  <style>
+    :root {
+      --navy-900: #102540;
+      --navy-800: #163a70;
+      --blue-700: #1f4d95;
+      --blue-500: #3f86e8;
+      --line: #dbe4f0;
+      --soft: #f8fbff;
+      --white: #ffffff;
+      --slate-900: #162033;
+      --slate-500: #64748b;
+      --danger: #b91c1c;
+      --success: #059669;
+      --warning-text: #7c4a03;
+      --shadow: 0 24px 60px rgba(15, 23, 42, 0.14);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #dbe7ff 0%, #f5f7fb 45%, #e3f2ff 100%);
+      color: var(--slate-900);
+      font-family: "Pretendard", "Malgun Gothic", sans-serif;
+    }
+    button, input, textarea { font: inherit; }
+    .quote-app { width: 100%; padding: 24px 16px 40px; }
+    .quote-shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--white);
+      box-shadow: var(--shadow);
+    }
+    .quote-header {
+      position: relative;
+      padding: 36px 40px;
+      color: var(--white);
+      background: linear-gradient(135deg, var(--navy-800) 0%, #2358a7 55%, var(--blue-500) 100%);
+    }
+    .quote-header::after {
+      content: "";
+      position: absolute;
+      top: -120px;
+      right: -60px;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .quote-header-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .brand-block {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .logo-box {
+      position: relative;
+      width: 92px;
+      height: 92px;
+      overflow: hidden;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.97);
+      box-shadow: 0 10px 24px rgba(12, 26, 58, 0.18);
+      cursor: pointer;
+    }
+    .logo-placeholder, .logo-box img { width: 100%; height: 100%; }
+    .logo-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--navy-800);
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+    .logo-placeholder strong {
+      font-size: 28px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .logo-box img {
+      display: none;
+      object-fit: contain;
+      background: #ffffff;
+    }
+    .logo-remove {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      display: none;
+      width: 24px;
+      height: 24px;
+      border: 0;
+      border-radius: 999px;
+      background: #dc2626;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(127, 29, 29, 0.25);
+    }
+    .brand-copy small {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      opacity: 0.82;
+    }
+    .brand-copy h1 {
+      margin: 0;
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: 8px;
+      line-height: 1.1;
+    }
+    .brand-copy p {
+      margin: 6px 0 0;
+      font-size: 13px;
+      letter-spacing: 0.8px;
+      opacity: 0.92;
+    }
+    .meta-card {
+      min-width: 270px;
+      padding: 16px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(8px);
+    }
+    .meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+    .meta-row:last-child { margin-bottom: 0; }
+    .meta-row span { font-weight: 700; }
+    .meta-card input {
+      width: 160px;
+      padding: 4px 6px;
+      border: 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.58);
+      background: transparent;
+      color: #ffffff;
+      text-align: right;
+      outline: none;
+    }
+    .quote-body { padding: 32px 40px 36px; }
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+    .info-card {
+      padding: 22px 22px 20px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--soft);
+    }
+    .info-card h2 {
+      display: inline-block;
+      margin: 0 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--blue-700);
+      color: var(--blue-700);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+    }
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 0;
+      font-size: 13.5px;
+    }
+    .info-row.align-top { align-items: flex-start; }
+    .info-row label, .info-row .label {
+      width: 80px;
+      flex-shrink: 0;
+      color: var(--slate-500);
+      font-weight: 700;
+    }
+    .info-row input, .memo-box textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d5dfec;
+      border-radius: 10px;
+      background: #ffffff;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .info-row input:focus, .memo-box textarea:focus, .table-input:focus {
+      border-color: #8fb7ef;
+      box-shadow: 0 0 0 3px rgba(63, 134, 232, 0.12);
+    }
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .toolbar-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .action-btn {
+      padding: 11px 18px;
+      border: 0;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--blue-700);
+      color: #ffffff;
+      box-shadow: 0 10px 20px rgba(31, 77, 149, 0.18);
+    }
+    .btn-danger { background: #fee2e2; color: var(--danger); }
+    .btn-neutral { background: #eef3f9; color: #334155; }
+    .btn-print {
+      background: #0f766e;
+      color: #ffffff;
+      box-shadow: 0 10px 20px rgba(15, 118, 110, 0.18);
+    }
+    .table-wrap {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #ffffff;
+    }
+    .table-scroll { overflow-x: auto; }
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    th {
+      padding: 14px 8px;
+      border-bottom: 1px solid #16345e;
+      background: linear-gradient(180deg, #17396c 0%, #2158a6 100%);
+      color: #ffffff;
+      font-size: 12.8px;
+      font-weight: 700;
+      text-align: center;
+    }
+    td {
+      padding: 8px;
+      border-bottom: 1px solid #e2e8f0;
+      text-align: center;
+      vertical-align: middle;
+    }
+    tbody tr:nth-child(even) td { background: #f9fbfe; }
+    tbody tr:hover td { background: #eef5ff; }
+    .row-no { color: var(--slate-500); font-weight: 700; }
+    .table-input {
+      width: 100%;
+      padding: 9px 10px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      background: transparent;
+      outline: none;
+    }
+    .table-input.text-left { text-align: left; font-weight: 600; }
+    .table-input.text-right { text-align: right; }
+    .amount-cell {
+      padding-right: 14px;
+      color: var(--blue-700);
+      text-align: right;
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .row-delete-btn {
+      padding: 7px 12px;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      background: #fef2f2;
+      color: var(--danger);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 380px;
+      gap: 20px;
+      margin-top: 24px;
+      align-items: stretch;
+    }
+    .memo-box {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--soft);
+    }
+    .memo-box label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--blue-700);
+      font-size: 12.5px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+    .memo-box textarea {
+      min-height: 118px;
+      resize: vertical;
+    }
+    .totals-card {
+      overflow: hidden;
+      border: 2px solid var(--blue-700);
+      border-radius: 18px;
+      background: #ffffff;
+    }
+    .total-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 22px;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+    }
+    .total-row span:first-child {
+      color: var(--slate-500);
+      font-weight: 700;
+    }
+    .total-row strong {
+      color: var(--slate-900);
+      font-weight: 800;
+    }
+    .total-row:last-child {
+      padding: 18px 22px;
+      border-bottom: 0;
+      background: linear-gradient(135deg, #17396c 0%, #2464be 100%);
+      color: #ffffff;
+      font-size: 16px;
+    }
+    .total-row:last-child span:first-child, .total-row:last-child strong { color: #ffffff; }
+    .total-row:last-child strong { font-size: 23px; font-weight: 900; }
+    .notice-box {
+      margin-top: 28px;
+      padding: 18px 22px;
+      border-left: 4px solid #f59e0b;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #fff7dd 0%, #fff0b8 100%);
+      color: var(--warning-text);
+      font-size: 12.5px;
+      line-height: 1.8;
+    }
+    .save-indicator {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 9999;
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: var(--success);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 10px 30px rgba(5, 150, 105, 0.3);
+      opacity: 0;
+      transform: translateY(18px);
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .hidden-file { display: none; }
+    @media (max-width: 900px) { .summary-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) {
+      .quote-header { padding: 24px 20px; }
+      .quote-body { padding: 22px 16px 26px; }
+      .quote-header-inner { flex-direction: column; align-items: flex-start; }
+      .meta-card, .toolbar-group, .toolbar-group .action-btn { width: 100%; }
+      .toolbar { justify-content: stretch; }
+      .info-grid { grid-template-columns: 1fr; }
+      .brand-copy h1 { font-size: 26px; letter-spacing: 5px; }
+    }
+    @media (max-width: 480px) {
+      .quote-app { padding: 16px 10px 32px; }
+      .logo-box { width: 76px; height: 76px; }
+      .brand-copy h1 { font-size: 22px; letter-spacing: 3px; }
+      .action-btn { padding: 10px 12px; font-size: 12.5px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="quote-app" id="easyoneQuoteApp">
+    <input class="hidden-file" type="file" id="logoInput" accept="image/*">
+    <div class="quote-shell">
+      <div class="quote-header">
+        <div class="quote-header-inner">
+          <div class="brand-block">
+            <div class="logo-box" id="logoBox" title="로고 업로드">
+              <div class="logo-placeholder" id="logoPlaceholder"><strong>+</strong>로고<br>업로드</div>
+              <img id="logoImage" alt="업로드 로고">
+              <button class="logo-remove" type="button" id="logoRemoveBtn" title="로고 삭제">×</button>
+            </div>
+            <div class="brand-copy">
+              <small>EASYONE PLATFORM QUOTATION</small>
+              <h1>견 적 서</h1>
+              <p>네이비·블루 톤의 기업형 자동 견적서 시스템</p>
+            </div>
+          </div>
+          <div class="meta-card">
+            <div class="meta-row"><span>견적번호</span><input type="text" id="quoteNo" placeholder="자동 생성"></div>
+            <div class="meta-row"><span>견적일자</span><input type="text" id="quoteDate"></div>
+            <div class="meta-row"><span>유효기간</span><input type="text" id="validUntil" placeholder="발행일+30일"></div>
+          </div>
+        </div>
+      </div>
+      <div class="quote-body">
+        <div class="info-grid">
+          <section class="info-card">
+            <h2>■ 공급자 (SUPPLIER)</h2>
+            <div class="info-row"><div class="label">상호명</div><div><strong>이지원플랫폼</strong></div></div>
+            <div class="info-row"><label for="ownerName">대표자</label><input type="text" id="ownerName" placeholder="대표자명"></div>
+            <div class="info-row align-top"><div class="label">주소</div><div>전북특별자치도 전주시 완산구<br>전주천서로 473, 5층</div></div>
+            <div class="info-row"><div class="label">연락처</div><div><strong>010-5844-1121</strong></div></div>
+            <div class="info-row"><label for="ownerEmail">이메일</label><input type="text" id="ownerEmail" placeholder="이메일 (선택)"></div>
+          </section>
+          <section class="info-card">
+            <h2>■ 수신자 (CLIENT)</h2>
+            <div class="info-row"><label for="clientName">상호</label><input type="text" id="clientName" placeholder="고객 상호 입력"></div>
+            <div class="info-row"><label for="clientPerson">담당자</label><input type="text" id="clientPerson" placeholder="담당자명"></div>
+            <div class="info-row"><label for="clientPhone">연락처</label><input type="text" id="clientPhone" placeholder="연락처"></div>
+            <div class="info-row"><label for="clientAddr">주소</label><input type="text" id="clientAddr" placeholder="주소 (선택)"></div>
+            <div class="info-row"><label for="clientEmail">이메일</label><input type="text" id="clientEmail" placeholder="이메일 (선택)"></div>
+          </section>
+        </div>
+        <div class="toolbar">
+          <div class="toolbar-group">
+            <button class="action-btn btn-primary" type="button" id="addRowBtn">＋ 항목 추가</button>
+            <button class="action-btn btn-danger" type="button" id="deleteCheckedBtn">☒ 체크 삭제</button>
+            <button class="action-btn btn-neutral" type="button" id="resetBtn">↺ 초기화</button>
+          </div>
+          <div class="toolbar-group">
+            <button class="action-btn btn-print" type="button" id="printBtn">🖨 인쇄 / PDF 저장</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:42px;"><input type="checkbox" id="checkAll"></th>
+                  <th style="width:56px;">No.</th>
+                  <th style="min-width:280px;">전문 분야 (상품 / 서비스)</th>
+                  <th style="width:96px;">수량</th>
+                  <th style="width:140px;">단가 (원)</th>
+                  <th style="width:156px;">금액 (원)</th>
+                  <th style="width:84px;">삭제</th>
+                </tr>
+              </thead>
+              <tbody id="quoteBodyRows"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="summary-grid">
+          <section class="memo-box">
+            <label for="quoteMemo">특이사항 / 메모</label>
+            <textarea id="quoteMemo" placeholder="견적 관련 특이사항, 협의 내용 등을 입력하세요."></textarea>
+          </section>
+          <section class="totals-card">
+            <div class="total-row"><span>공급가액 (소계)</span><strong><span id="subtotal">0</span> 원</strong></div>
+            <div class="total-row"><span>부가세 (VAT 10%)</span><strong><span id="vat">0</span> 원</strong></div>
+            <div class="total-row"><span>합계 (VAT 포함)</span><strong><span id="total">0</span> 원</strong></div>
+          </section>
+        </div>
+        <div class="notice-box">
+          <div style="margin-bottom:8px; font-size:13.5px; font-weight:800;">※ 견적 안내</div>
+          <div>1. 본 견적서의 유효 기간은 발행일로부터 30일입니다.</div>
+          <div>2. 상기 금액은 부가가치세(VAT 10%)가 포함된 금액입니다.</div>
+          <div>3. 항목 / 수량 / 단가 변경 시 금액이 자동으로 재계산됩니다.</div>
+          <div>4. 추가 문의: <strong>이지원플랫폼 010-5844-1121</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="save-indicator" id="saveIndicator">✓ 자동 저장됨</div>
+  </div>
+
+  <script>
+    (function () {
+      var STORAGE_KEY = "easyone_platform_standalone_quote_v1";
+      var defaultItems = [
+        "숏폼, 릴스, 클립, 당근스토리 영상게시",
+        "유튜브, 틱톡 영상게시 및 라이브커머스",
+        "네이버 스마트플레이스 등록관리",
+        "네이버 스마트스토어 상품등록 및 관리",
+        "네이버 검색광고",
+        "네이버 페이지24를 활용한 홈페이지 제작",
+        "페이지24 활용 프로필제작, QR제작, QR삽입, 명함제작",
+        "전단, 포스터, 광고 인쇄물 제작",
+        "커스텀 굿즈 제작",
+        "보험상담 및 설계",
+        "가전렌탈 상담 및 설계",
+        "초기창업 설비 렌탈, 분할 납부 설계",
+        "바이럴 마케팅",
+        "체험단",
+        "전문가 연계 (상표등록, 특허등록)",
+        "기술전문가 연계 (가스, 전기, 소방, 건축, 위험물)",
+        "박람회 전시 및 PT 위탁 운영"
+      ];
+
+      function $(id) { return document.getElementById(id); }
+
+      var refs = {
+        bodyRows: $("quoteBodyRows"),
+        checkAll: $("checkAll"),
+        subtotal: $("subtotal"),
+        vat: $("vat"),
+        total: $("total"),
+        quoteNo: $("quoteNo"),
+        quoteDate: $("quoteDate"),
+        validUntil: $("validUntil"),
+        ownerName: $("ownerName"),
+        ownerEmail: $("ownerEmail"),
+        clientName: $("clientName"),
+        clientPerson: $("clientPerson"),
+        clientPhone: $("clientPhone"),
+        clientAddr: $("clientAddr"),
+        clientEmail: $("clientEmail"),
+        memo: $("quoteMemo"),
+        addRowBtn: $("addRowBtn"),
+        deleteCheckedBtn: $("deleteCheckedBtn"),
+        resetBtn: $("resetBtn"),
+        printBtn: $("printBtn"),
+        saveIndicator: $("saveIndicator"),
+        logoInput: $("logoInput"),
+        logoBox: $("logoBox"),
+        logoImage: $("logoImage"),
+        logoPlaceholder: $("logoPlaceholder"),
+        logoRemoveBtn: $("logoRemoveBtn")
+      };
+
+      var saveTimer = null;
+
+      function formatNumber(value) { return Number(value || 0).toLocaleString("ko-KR"); }
+
+      function formatDate(date) {
+        var year = date.getFullYear();
+        var month = String(date.getMonth() + 1).padStart(2, "0");
+        var day = String(date.getDate()).padStart(2, "0");
+        return year + "-" + month + "-" + day;
+      }
+
+      function generateQuoteNo(date) {
+        return "EZP-" + date.getFullYear() +
+          String(date.getMonth() + 1).padStart(2, "0") +
+          String(date.getDate()).padStart(2, "0") +
+          "-" + String(Math.floor(Math.random() * 900) + 100);
+      }
+
+      function setDefaultMeta(forceNumber) {
+        var now = new Date();
+        if (!refs.quoteDate.value) refs.quoteDate.value = formatDate(now);
+        if (!refs.validUntil.value) {
+          var valid = new Date(now);
+          valid.setDate(valid.getDate() + 30);
+          refs.validUntil.value = formatDate(valid);
+        }
+        if (forceNumber || !refs.quoteNo.value) refs.quoteNo.value = generateQuoteNo(now);
+      }
+
+      function renumberRows() {
+        var rows = refs.bodyRows.querySelectorAll("tr");
+        for (var i = 0; i < rows.length; i++) {
+          rows[i].querySelector(".row-no").textContent = i + 1;
+        }
+      }
+
+      function calculateAll() {
+        var rows = refs.bodyRows.querySelectorAll("tr");
+        var subtotal = 0;
+        for (var i = 0; i < rows.length; i++) {
+          var qty = parseFloat(rows[i].querySelector(".row-qty").value) || 0;
+          var price = parseFloat(rows[i].querySelector(".row-price").value) || 0;
+          var amount = qty * price;
+          rows[i].querySelector(".amount-cell").textContent = formatNumber(amount);
+          subtotal += amount;
+        }
+        var vat = Math.round(subtotal * 0.1);
+        refs.subtotal.textContent = formatNumber(subtotal);
+        refs.vat.textContent = formatNumber(vat);
+        refs.total.textContent = formatNumber(subtotal + vat);
+      }
+
+      function collectRows() {
+        var rows = refs.bodyRows.querySelectorAll("tr");
+        var items = [];
+        for (var i = 0; i < rows.length; i++) {
+          items.push({
+            name: rows[i].querySelector(".row-name").value,
+            qty: rows[i].querySelector(".row-qty").value,
+            price: rows[i].querySelector(".row-price").value
+          });
+        }
+        return items;
+      }
+
+      function showSaveIndicator() {
+        refs.saveIndicator.style.opacity = "1";
+        refs.saveIndicator.style.transform = "translateY(0)";
+        clearTimeout(refs.saveIndicator._timer);
+        refs.saveIndicator._timer = setTimeout(function () {
+          refs.saveIndicator.style.opacity = "0";
+          refs.saveIndicator.style.transform = "translateY(18px)";
+        }, 1200);
+      }
+
+      function saveData() {
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(function () {
+          var data = {
+            logo: refs.logoImage.style.display !== "none" ? refs.logoImage.src : "",
+            quoteNo: refs.quoteNo.value,
+            quoteDate: refs.quoteDate.value,
+            validUntil: refs.validUntil.value,
+            ownerName: refs.ownerName.value,
+            ownerEmail: refs.ownerEmail.value,
+            clientName: refs.clientName.value,
+            clientPerson: refs.clientPerson.value,
+            clientPhone: refs.clientPhone.value,
+            clientAddr: refs.clientAddr.value,
+            clientEmail: refs.clientEmail.value,
+            memo: refs.memo.value,
+            items: collectRows()
+          };
+          try {
+            window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            showSaveIndicator();
+          } catch (error) {
+            console.warn("저장 실패:", error);
+          }
+        }, 250);
+      }
+
+      function createRow(name, qty, price) {
+        var tr = document.createElement("tr");
+        tr.innerHTML =
+          '<td><input type="checkbox" class="row-check"></td>' +
+          '<td class="row-no"></td>' +
+          '<td><input type="text" class="table-input text-left row-name" placeholder="항목명 입력"></td>' +
+          '<td><input type="number" min="0" class="table-input text-right row-qty" placeholder="0"></td>' +
+          '<td><input type="number" min="0" class="table-input text-right row-price" placeholder="0"></td>' +
+          '<td class="amount-cell">0</td>' +
+          '<td><button type="button" class="row-delete-btn">삭제</button></td>';
+        tr.querySelector(".row-name").value = name || "";
+        tr.querySelector(".row-qty").value = qty || "";
+        tr.querySelector(".row-price").value = price || "";
+        refs.bodyRows.appendChild(tr);
+
+        var inputs = tr.querySelectorAll("input");
+        for (var i = 0; i < inputs.length; i++) {
+          inputs[i].addEventListener("input", function () {
+            calculateAll();
+            saveData();
+          });
+        }
+
+        tr.querySelector(".row-delete-btn").addEventListener("click", function () {
+          tr.remove();
+          renumberRows();
+          calculateAll();
+          saveData();
+        });
+
+        renumberRows();
+        calculateAll();
+      }
+
+      function addRow() {
+        createRow("", "", "");
+        var names = refs.bodyRows.querySelectorAll(".row-name");
+        if (names.length) names[names.length - 1].focus();
+        saveData();
+      }
+
+      function deleteCheckedRows() {
+        var checks = refs.bodyRows.querySelectorAll(".row-check");
+        var deleted = 0;
+        for (var i = checks.length - 1; i >= 0; i--) {
+          if (checks[i].checked) {
+            checks[i].closest("tr").remove();
+            deleted += 1;
+          }
+        }
+        if (!deleted) {
+          alert("삭제할 항목을 체크해 주세요.");
+          return;
+        }
+        refs.checkAll.checked = false;
+        renumberRows();
+        calculateAll();
+        saveData();
+      }
+
+      function toggleAllRows() {
+        var checks = refs.bodyRows.querySelectorAll(".row-check");
+        for (var i = 0; i < checks.length; i++) {
+          checks[i].checked = refs.checkAll.checked;
+        }
+      }
+
+      function setLogo(dataUrl) {
+        refs.logoImage.src = dataUrl;
+        refs.logoImage.style.display = "block";
+        refs.logoPlaceholder.style.display = "none";
+        refs.logoRemoveBtn.style.display = "block";
+      }
+
+      function removeLogo() {
+        refs.logoInput.value = "";
+        refs.logoImage.src = "";
+        refs.logoImage.style.display = "none";
+        refs.logoPlaceholder.style.display = "flex";
+        refs.logoRemoveBtn.style.display = "none";
+        saveData();
+      }
+
+      function uploadLogo(event) {
+        var file = event.target.files && event.target.files[0];
+        if (!file) return;
+        if (file.size > 2 * 1024 * 1024) {
+          alert("로고 이미지는 2MB 이하로 업로드해주세요.");
+          refs.logoInput.value = "";
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function (loadEvent) {
+          setLogo(loadEvent.target.result);
+          saveData();
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function loadData() {
+        try {
+          var raw = window.localStorage.getItem(STORAGE_KEY);
+          if (!raw) return false;
+          var data = JSON.parse(raw);
+          refs.bodyRows.innerHTML = "";
+          refs.quoteNo.value = data.quoteNo || "";
+          refs.quoteDate.value = data.quoteDate || "";
+          refs.validUntil.value = data.validUntil || "";
+          refs.ownerName.value = data.ownerName || "";
+          refs.ownerEmail.value = data.ownerEmail || "";
+          refs.clientName.value = data.clientName || "";
+          refs.clientPerson.value = data.clientPerson || "";
+          refs.clientPhone.value = data.clientPhone || "";
+          refs.clientAddr.value = data.clientAddr || "";
+          refs.clientEmail.value = data.clientEmail || "";
+          refs.memo.value = data.memo || "";
+          if (data.logo) setLogo(data.logo);
+          if (Array.isArray(data.items) && data.items.length) {
+            for (var i = 0; i < data.items.length; i++) {
+              createRow(data.items[i].name || "", data.items[i].qty || "", data.items[i].price || "");
+            }
+          } else {
+            for (var j = 0; j < defaultItems.length; j++) {
+              createRow(defaultItems[j], "", "");
+            }
+          }
+          setDefaultMeta(false);
+          calculateAll();
+          return true;
+        } catch (error) {
+          console.warn("저장 데이터 로드 실패:", error);
+          return false;
+        }
+      }
+
+      function resetAll() {
+        if (!window.confirm("모든 입력 내용을 초기화하시겠습니까?\n(로고 및 저장 데이터가 모두 삭제됩니다)")) return;
+        try {
+          window.localStorage.removeItem(STORAGE_KEY);
+        } catch (error) {
+          console.warn("초기화 실패:", error);
+        }
+        refs.bodyRows.innerHTML = "";
+        refs.checkAll.checked = false;
+        refs.quoteNo.value = "";
+        refs.quoteDate.value = "";
+        refs.validUntil.value = "";
+        refs.ownerName.value = "";
+        refs.ownerEmail.value = "";
+        refs.clientName.value = "";
+        refs.clientPerson.value = "";
+        refs.clientPhone.value = "";
+        refs.clientAddr.value = "";
+        refs.clientEmail.value = "";
+        refs.memo.value = "";
+        removeLogo();
+        setDefaultMeta(true);
+        for (var i = 0; i < defaultItems.length; i++) {
+          createRow(defaultItems[i], "", "");
+        }
+        calculateAll();
+        saveData();
+      }
+
+      function buildPrintHtml() {
+        var clone = document.getElementById("easyoneQuoteApp").cloneNode(true);
+        var selectorsToRemove = ["#logoInput", "#saveIndicator", ".toolbar", ".logo-remove", "th:first-child", "th:last-child"];
+        for (var i = 0; i < selectorsToRemove.length; i++) {
+          var removeNodes = clone.querySelectorAll(selectorsToRemove[i]);
+          for (var j = 0; j < removeNodes.length; j++) removeNodes[j].remove();
+        }
+        var rows = clone.querySelectorAll("tbody tr");
+        for (var r = 0; r < rows.length; r++) {
+          if (rows[r].children[0]) rows[r].children[0].remove();
+          if (rows[r].children[rows[r].children.length - 1]) rows[r].children[rows[r].children.length - 1].remove();
+        }
+        var fields = clone.querySelectorAll("input, textarea");
+        for (var k = 0; k < fields.length; k++) {
+          var field = fields[k];
+          if (field.type === "checkbox" || field.type === "file") {
+            field.remove();
+            continue;
+          }
+          var replacement;
+          if (field.tagName === "TEXTAREA") {
+            replacement = document.createElement("div");
+            replacement.style.whiteSpace = "pre-wrap";
+            replacement.style.minHeight = "80px";
+            replacement.style.padding = "2px 0";
+            replacement.textContent = field.value || "";
+          } else {
+            replacement = document.createElement("span");
+            replacement.style.display = "inline-block";
+            replacement.style.minWidth = "60px";
+            replacement.textContent = field.value || "";
+          }
+          field.parentNode.replaceChild(replacement, field);
+        }
+        clone.style.padding = "0";
+        clone.style.background = "#ffffff";
+        return "<!DOCTYPE html><html lang='ko'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>이지원플랫폼 견적서</title></head><body style='margin:0; padding:16px; background:#ffffff;'>" + clone.outerHTML + "</body></html>";
+      }
+
+      function printQuote() {
+        try {
+          var printWindow = window.open("", "_blank", "width=1100,height=900");
+          if (printWindow) {
+            printWindow.document.open();
+            printWindow.document.write(buildPrintHtml());
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(function () { printWindow.print(); }, 300);
+            return;
+          }
+        } catch (error) {
+          console.warn("인쇄 창 열기 실패:", error);
+        }
+        window.print();
+      }
+
+      function bindFieldAutosave() {
+        var ids = ["quoteNo", "quoteDate", "validUntil", "ownerName", "ownerEmail", "clientName", "clientPerson", "clientPhone", "clientAddr", "clientEmail", "quoteMemo"];
+        for (var i = 0; i < ids.length; i++) $(ids[i]).addEventListener("input", saveData);
+      }
+
+      refs.logoBox.addEventListener("click", function () { refs.logoInput.click(); });
+      refs.logoRemoveBtn.addEventListener("click", function (event) {
+        event.stopPropagation();
+        if (window.confirm("로고를 삭제하시겠습니까?")) removeLogo();
+      });
+      refs.logoInput.addEventListener("change", uploadLogo);
+      refs.addRowBtn.addEventListener("click", addRow);
+      refs.deleteCheckedBtn.addEventListener("click", deleteCheckedRows);
+      refs.resetBtn.addEventListener("click", resetAll);
+      refs.printBtn.addEventListener("click", printQuote);
+      refs.checkAll.addEventListener("change", toggleAllRows);
+
+      bindFieldAutosave();
+
+      var loaded = loadData();
+      if (!loaded) {
+        setDefaultMeta(true);
+        for (var i = 0; i < defaultItems.length; i++) createRow(defaultItems[i], "", "");
+        calculateAll();
+      }
+    })();
+  </script>
+</body>
+</html>

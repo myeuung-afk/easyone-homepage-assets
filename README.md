@@ -1,46 +1,50 @@
-# easyone-homepage-assets
+# EasyOne Homepage Assets
 
-이지원플랫폼 홈페이지 이미지 에셋 저장소
+이지원플랫폼 홈페이지 운영에 필요한 정적 리소스와 독립형 웹 기능 페이지를 관리하는 저장소입니다.
 
-PAGE24 홈페이지에서 사용하는 PC용/모바일용 이미지 URL을 안정적으로 관리합니다.
+## 주요 용도
 
-## 이미지 URL 사용법
+- PAGE24 홈페이지 삽입용 이미지 관리
+- PC/모바일 반응형 배너 이미지 관리
+- 라이브커머스 서비스 페이지 이미지 관리
+- 자동 견적서 등 독립형 HTML/CSS/JS 기능 페이지 배포
+- GitHub Pages 기반 공개 URL 제공
 
-이 저장소는 GitHub Pages로 서비스됩니다.
+## Repository Description
 
-```
-https://[GitHub계정명].github.io/easyone-homepage-assets/images/main/main-hero-pc.png
-```
+- 국문: 이지원플랫폼 홈페이지 운영용 정적 리소스 및 기능형 페이지 관리 저장소
+- 영문: Static assets and standalone web tools for EasyOne Platform homepage
 
 ## 폴더 구조
 
-```
+```text
 images/
   main/
-    main-hero-pc.png        ← 메인 히어로 (PC용, 가로형)
-    main-hero-mobile.png    ← 메인 히어로 (모바일용, 세로형)
+    메인 화면 PC/모바일 이미지
   live-commerce/
-    live-section-01.png     ← 라이브커머스 섹션 1
-    live-section-02.png     ← 라이브커머스 섹션 2
-    live-section-03.png     ← 라이브커머스 섹션 3
+    라이브커머스 서비스 페이지 이미지
+
+quote/
+  standalone_quote_app.html
+  page24_quote_button_section.html
+  README.md
 ```
 
-## 파일명 규칙
+## GitHub Pages URL 구조
 
-- 영문 소문자 + 하이픈만 사용
-- 공백, 한글 파일명 사용 금지
-- 예시: `main-hero-pc.png` (O) / `메인히어로.png` (X)
+메인 이미지 예시:
 
-## 이미지 최적화 기준
+`https://myeuung-afk.github.io/easyone-homepage-assets/images/main/main-hero-pc.png`
 
-| 용도 | 권장 크기 | 포맷 |
-|---|---|---|
-| PC 히어로 | 1920×1080px, 1~3MB | PNG 또는 JPG |
-| 모바일 히어로 | 750×1334px (9:16), 1~2MB | PNG 또는 JPG |
-| 섹션 이미지 | 1200×800px 내외, 500KB~2MB | PNG 또는 JPG |
+자동 견적서:
 
-## 업로드 방법
+`https://myeuung-afk.github.io/easyone-homepage-assets/quote/standalone_quote_app.html`
 
-1. 이미지를 해당 폴더에 복사
-2. `git add .` → `git commit -m "이미지 추가"` → `git push`
-3. 약 1~2분 후 GitHub Pages에서 URL로 접근 가능
+## 운영 원칙
+
+1. 파일명은 영문 소문자와 하이픈을 사용한다.
+2. 한글, 공백, 특수문자 파일명은 사용하지 않는다.
+3. 홈페이지 삽입용 이미지는 웹 최적화 후 업로드한다.
+4. 기능형 페이지는 독립 실행 가능한 HTML 파일로 관리한다.
+5. PAGE24에서 JavaScript가 필요한 기능은 직접 삽입하지 않고 GitHub Pages 외부 페이지로 연결한다.
+6. PAGE24에는 이미지 URL 또는 외부 기능 페이지 링크만 연결한다.

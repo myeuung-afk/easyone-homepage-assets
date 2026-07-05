@@ -98,10 +98,12 @@
     }
     .logo-box img {
       display: block;
-      width: 100%;
-      max-width: 118px;
+      width: 132%;
+      max-width: none;
       height: auto;
       object-fit: contain;
+      transform: scale(1.18);
+      transform-origin: center center;
     }
     .logo-text {
       display: none;
@@ -519,7 +521,7 @@
         min-height: 88px;
       }
       .logo-box img {
-        max-width: 84px;
+        width: 132%;
       }
       .logo-text strong {
         font-size: 15px;
@@ -680,7 +682,13 @@
       }
 
       function shouldStartFresh() {
-        return new URLSearchParams(window.location.search).get("fresh") === "1";
+        var searchParams = new URLSearchParams(window.location.search);
+        if (searchParams.get("fresh") === "1") {
+          return true;
+        }
+
+        var referrer = document.referrer || "";
+        return referrer.indexOf("easyonepf.page24.app") !== -1 || referrer.indexOf("page24.app") !== -1;
       }
 
       function clearFreshFlagFromUrl() {
@@ -930,7 +938,9 @@
       function loadData() {
         try {
           if (shouldStartFresh()) {
+            window.localStorage.removeItem("easyone_platform_standalone_quote_v1");
             window.localStorage.removeItem(STORAGE_KEY);
+            window.localStorage.removeItem("easyone_page24_quote_v4");
             clearFreshFlagFromUrl();
             return false;
           }

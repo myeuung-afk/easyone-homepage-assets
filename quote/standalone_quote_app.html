@@ -827,6 +827,8 @@
 
       function buildPrintHtml() {
         var clone = document.getElementById("easyoneQuoteApp").cloneNode(true);
+        var styleTag = document.querySelector("style");
+        var styleHtml = styleTag ? styleTag.outerHTML : "";
         var selectorsToRemove = [".toolbar", "#saveIndicator", "th:first-child", "th:last-child"];
         for (var i = 0; i < selectorsToRemove.length; i++) {
           var removeNodes = clone.querySelectorAll(selectorsToRemove[i]);
@@ -861,7 +863,7 @@
         }
         clone.style.padding = "0";
         clone.style.background = "#ffffff";
-        return "<!DOCTYPE html><html lang='ko'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>이지원플랫폼 견적서</title><style>@page{size:A4;margin:10mm;}html,body{margin:0;padding:0;background:#ffffff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}body{min-height:auto;font-family:\"Pretendard\",\"Malgun Gothic\",sans-serif;}*{-webkit-print-color-adjust:exact;print-color-adjust:exact;box-sizing:border-box;}table{min-width:0 !important;}tbody tr:hover td{background:inherit !important;}</style></head><body>" + clone.outerHTML + "</body></html>";
+        return "<!DOCTYPE html><html lang='ko'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>이지원플랫폼 견적서</title>" + styleHtml + "<style>html,body{margin:0;padding:0;background:#ffffff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}body{min-height:auto;font-family:\"Pretendard\",\"Malgun Gothic\",sans-serif;}#easyoneQuoteApp{padding:0 !important;background:#ffffff !important;}.quote-shell{max-width:none !important;margin:0 !important;box-shadow:none !important;}table{min-width:0 !important;}tbody tr:hover td{background:inherit !important;}</style></head><body>" + clone.outerHTML + "</body></html>";
       }
 
       function printQuote() {

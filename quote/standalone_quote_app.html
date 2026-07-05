@@ -84,6 +84,13 @@
       background: rgba(255, 255, 255, 0.97);
       box-shadow: 0 10px 24px rgba(12, 26, 58, 0.18);
     }
+    .logo-box img {
+      display: block;
+      width: 100%;
+      max-width: 88px;
+      height: auto;
+      object-fit: contain;
+    }
     .logo-text {
       text-align: center;
       color: var(--navy-800);
@@ -439,6 +446,7 @@
     @media (max-width: 480px) {
       .quote-app { padding: 16px 10px 32px; }
       .logo-box { width: 88px; min-height: 76px; }
+      .logo-box img { max-width: 68px; }
       .logo-text strong { font-size: 15px; }
       .logo-text span { font-size: 9px; letter-spacing: 1px; }
       .brand-copy h1 { font-size: 22px; letter-spacing: 3px; }
@@ -453,7 +461,8 @@
         <div class="quote-header-inner">
           <div class="brand-block">
             <div class="logo-box" id="logoBox">
-              <div class="logo-text" id="logoText">
+              <img src="../images/logo/easyone-logo.jpg" alt="이지원플랫폼 로고" onerror="this.style.display='none';document.getElementById('logoText').style.display='block';">
+              <div class="logo-text" id="logoText" style="display:none;">
                 <strong>이지원플랫폼</strong>
                 <span>EASYONE PLATFORM</span>
               </div>
@@ -476,10 +485,10 @@
           <section class="info-card">
             <h2>■ 공급자 (SUPPLIER)</h2>
             <div class="info-row"><div class="label">상호명</div><div><strong>이지원플랫폼</strong></div></div>
-            <div class="info-row"><label for="ownerName">대표자</label><input type="text" id="ownerName" placeholder="대표자명"></div>
+            <div class="info-row"><div class="label">대표자</div><div id="ownerNameText"><strong>대표자명</strong></div></div>
             <div class="info-row align-top"><div class="label">주소</div><div>전북특별자치도 전주시 완산구<br>전주천서로 473, 5층</div></div>
             <div class="info-row"><div class="label">연락처</div><div><strong>010-5844-1121</strong></div></div>
-            <div class="info-row"><label for="ownerEmail">이메일</label><input type="text" id="ownerEmail" placeholder="이메일 (선택)"></div>
+            <div class="info-row"><div class="label">이메일</div><div id="ownerEmailText">이메일 주소</div></div>
           </section>
           <section class="info-card">
             <h2>■ 수신자 (CLIENT)</h2>
@@ -544,6 +553,10 @@
   <script>
     (function () {
       var STORAGE_KEY = "easyone_platform_standalone_quote_v2";
+      var SUPPLIER_INFO = {
+        ownerName: "대표자명",
+        ownerEmail: "이메일 주소"
+      };
       var defaultItems = [
         "숏폼, 릴스, 클립, 당근스토리 영상게시",
         "유튜브, 틱톡 영상게시 및 라이브커머스",
@@ -575,8 +588,8 @@
         quoteNo: $("quoteNo"),
         quoteDate: $("quoteDate"),
         validUntil: $("validUntil"),
-        ownerName: $("ownerName"),
-        ownerEmail: $("ownerEmail"),
+        ownerNameText: $("ownerNameText"),
+        ownerEmailText: $("ownerEmailText"),
         clientName: $("clientName"),
         clientPerson: $("clientPerson"),
         clientPhone: $("clientPhone"),
@@ -594,6 +607,11 @@
       var saveTimer = null;
 
       function formatNumber(value) { return Number(value || 0).toLocaleString("ko-KR"); }
+
+      function applySupplierInfo() {
+        refs.ownerNameText.textContent = SUPPLIER_INFO.ownerName;
+        refs.ownerEmailText.textContent = SUPPLIER_INFO.ownerEmail;
+      }
 
       function formatDate(date) {
         var year = date.getFullYear();
@@ -687,8 +705,6 @@
             quoteNo: refs.quoteNo.value,
             quoteDate: refs.quoteDate.value,
             validUntil: refs.validUntil.value,
-            ownerName: refs.ownerName.value,
-            ownerEmail: refs.ownerEmail.value,
             clientName: refs.clientName.value,
             clientPerson: refs.clientPerson.value,
             clientPhone: refs.clientPhone.value,
@@ -782,8 +798,6 @@
           refs.quoteNo.value = data.quoteNo || "";
           refs.quoteDate.value = data.quoteDate || "";
           refs.validUntil.value = data.validUntil || "";
-          refs.ownerName.value = data.ownerName || "";
-          refs.ownerEmail.value = data.ownerEmail || "";
           refs.clientName.value = data.clientName || "";
           refs.clientPerson.value = data.clientPerson || "";
           refs.clientPhone.value = data.clientPhone || "";
@@ -821,8 +835,6 @@
         refs.quoteNo.value = "";
         refs.quoteDate.value = "";
         refs.validUntil.value = "";
-        refs.ownerName.value = "";
-        refs.ownerEmail.value = "";
         refs.clientName.value = "";
         refs.clientPerson.value = "";
         refs.clientPhone.value = "";
@@ -896,10 +908,11 @@
       }
 
       function bindFieldAutosave() {
-        var ids = ["quoteNo", "quoteDate", "validUntil", "ownerName", "ownerEmail", "clientName", "clientPerson", "clientPhone", "clientAddr", "clientEmail", "quoteMemo"];
+        var ids = ["quoteNo", "quoteDate", "validUntil", "clientName", "clientPerson", "clientPhone", "clientAddr", "clientEmail", "quoteMemo"];
         for (var i = 0; i < ids.length; i++) $(ids[i]).addEventListener("input", saveData);
       }
 
+      applySupplierInfo();
       refs.addRowBtn.addEventListener("click", addRow);
       refs.deleteCheckedBtn.addEventListener("click", deleteCheckedRows);
       refs.resetBtn.addEventListener("click", resetAll);

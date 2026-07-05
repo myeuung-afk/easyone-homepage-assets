@@ -1,0 +1,10 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 원본 4K / 대용량 원본 파일 (웹 최적화 전)
+originals/
+*_4k.*
+*_original.*
+*_raw.*

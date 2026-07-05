@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>이지원플랫폼 자동 견적서</title>
+  <title>이지원플랫폼 견적서</title>
   <style>
     :root {
       --navy-900: #102540;
@@ -22,15 +22,25 @@
     }
 
     * { box-sizing: border-box; }
-    body {
+    html, body {
       margin: 0;
+      min-height: 100%;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    body {
       min-height: 100vh;
       background: linear-gradient(135deg, #dbe7ff 0%, #f5f7fb 45%, #e3f2ff 100%);
       color: var(--slate-900);
       font-family: "Pretendard", "Malgun Gothic", sans-serif;
     }
-    button, input, textarea { font: inherit; }
-    .quote-app { width: 100%; padding: 24px 16px 40px; }
+    button, input, textarea {
+      font: inherit;
+    }
+    .quote-app {
+      width: 100%;
+      padding: 24px 16px 40px;
+    }
     .quote-shell {
       max-width: 1180px;
       margin: 0 auto;
@@ -55,6 +65,7 @@
       height: 320px;
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.08);
+      pointer-events: none;
     }
     .quote-header-inner {
       position: relative;
@@ -83,6 +94,7 @@
       border-radius: 20px;
       background: rgba(255, 255, 255, 0.97);
       box-shadow: 0 10px 24px rgba(12, 26, 58, 0.18);
+      flex-shrink: 0;
     }
     .logo-box img {
       display: block;
@@ -92,9 +104,10 @@
       object-fit: contain;
     }
     .logo-text {
+      display: none;
       text-align: center;
       color: var(--navy-800);
-      line-height: 1.2;
+      line-height: 1.18;
     }
     .logo-text strong {
       display: block;
@@ -146,10 +159,14 @@
       margin-bottom: 10px;
       font-size: 13px;
     }
-    .meta-row:last-child { margin-bottom: 0; }
-    .meta-row span { font-weight: 700; }
+    .meta-row:last-child {
+      margin-bottom: 0;
+    }
+    .meta-row span {
+      font-weight: 700;
+    }
     .meta-card input {
-      width: 160px;
+      width: 180px;
       padding: 4px 6px;
       border: 0;
       border-bottom: 1px dashed rgba(255, 255, 255, 0.58);
@@ -158,7 +175,9 @@
       text-align: right;
       outline: none;
     }
-    .quote-body { padding: 32px 40px 36px; }
+    .quote-body {
+      padding: 32px 40px 36px;
+    }
     .info-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -188,14 +207,18 @@
       padding: 7px 0;
       font-size: 13.5px;
     }
-    .info-row.align-top { align-items: flex-start; }
-    .info-row label, .info-row .label {
+    .info-row.align-top {
+      align-items: flex-start;
+    }
+    .info-row label,
+    .info-row .label {
       width: 80px;
       flex-shrink: 0;
       color: var(--slate-500);
       font-weight: 700;
     }
-    .info-row input, .memo-box textarea {
+    .info-row input,
+    .memo-box textarea {
       width: 100%;
       padding: 10px 12px;
       border: 1px solid #d5dfec;
@@ -204,7 +227,9 @@
       outline: none;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
-    .info-row input:focus, .memo-box textarea:focus, .table-input:focus {
+    .info-row input:focus,
+    .memo-box textarea:focus,
+    .table-input:focus {
       border-color: #8fb7ef;
       box-shadow: 0 0 0 3px rgba(63, 134, 232, 0.12);
     }
@@ -234,8 +259,14 @@
       color: #ffffff;
       box-shadow: 0 10px 20px rgba(31, 77, 149, 0.18);
     }
-    .btn-danger { background: #fee2e2; color: var(--danger); }
-    .btn-neutral { background: #eef3f9; color: #334155; }
+    .btn-danger {
+      background: #fee2e2;
+      color: var(--danger);
+    }
+    .btn-neutral {
+      background: #eef3f9;
+      color: #334155;
+    }
     .btn-print {
       background: #0f766e;
       color: #ffffff;
@@ -247,7 +278,9 @@
       border-radius: 18px;
       background: #ffffff;
     }
-    .table-scroll { overflow-x: auto; }
+    .table-scroll {
+      overflow-x: auto;
+    }
     table {
       width: 100%;
       min-width: 760px;
@@ -269,9 +302,16 @@
       text-align: center;
       vertical-align: middle;
     }
-    tbody tr:nth-child(even) td { background: #f9fbfe; }
-    tbody tr:hover td { background: #eef5ff; }
-    .row-no { color: var(--slate-500); font-weight: 700; }
+    tbody tr:nth-child(even) td {
+      background: #f9fbfe;
+    }
+    tbody tr:hover td {
+      background: #eef5ff;
+    }
+    .row-no {
+      color: var(--slate-500);
+      font-weight: 700;
+    }
     .table-input {
       width: 100%;
       padding: 9px 10px;
@@ -280,8 +320,13 @@
       background: transparent;
       outline: none;
     }
-    .table-input.text-left { text-align: left; font-weight: 600; }
-    .table-input.text-right { text-align: right; }
+    .table-input.text-left {
+      text-align: left;
+      font-weight: 600;
+    }
+    .table-input.text-right {
+      text-align: right;
+    }
     .amount-cell {
       padding-right: 14px;
       color: var(--blue-700);
@@ -353,8 +398,14 @@
       color: #ffffff;
       font-size: 16px;
     }
-    .total-row:last-child span:first-child, .total-row:last-child strong { color: #ffffff; }
-    .total-row:last-child strong { font-size: 23px; font-weight: 900; }
+    .total-row:last-child span:first-child,
+    .total-row:last-child strong {
+      color: #ffffff;
+    }
+    .total-row:last-child strong {
+      font-size: 23px;
+      font-weight: 900;
+    }
     .notice-box {
       margin-top: 28px;
       padding: 18px 22px;
@@ -382,18 +433,18 @@
       pointer-events: none;
       transition: opacity 0.25s ease, transform 0.25s ease;
     }
-    .hidden-file { display: none; }
+
     @page {
       size: A4;
       margin: 10mm;
     }
+
     @media print {
-      html, body {
+      html,
+      body {
         margin: 0;
         padding: 0;
         background: #ffffff !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
       }
       body {
         min-height: auto;
@@ -406,6 +457,7 @@
         width: 100%;
         max-width: none;
         margin: 0;
+        border-radius: 0;
         box-shadow: none;
       }
       .toolbar,
@@ -422,35 +474,68 @@
       tbody tr:hover td {
         background: inherit !important;
       }
-      .quote-header,
-      th,
-      .total-row:last-child,
-      .notice-box,
-      .info-card,
-      .memo-box,
-      .totals-card {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+    }
+
+    @media (max-width: 900px) {
+      .summary-grid {
+        grid-template-columns: 1fr;
       }
     }
-    @media (max-width: 900px) { .summary-grid { grid-template-columns: 1fr; } }
+
     @media (max-width: 768px) {
-      .quote-header { padding: 24px 20px; }
-      .quote-body { padding: 22px 16px 26px; }
-      .quote-header-inner { flex-direction: column; align-items: flex-start; }
-      .meta-card, .toolbar-group, .toolbar-group .action-btn { width: 100%; }
-      .toolbar { justify-content: stretch; }
-      .info-grid { grid-template-columns: 1fr; }
-      .brand-copy h1 { font-size: 26px; letter-spacing: 5px; }
+      .quote-header {
+        padding: 24px 20px;
+      }
+      .quote-body {
+        padding: 22px 16px 26px;
+      }
+      .quote-header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .meta-card,
+      .toolbar-group,
+      .toolbar-group .action-btn {
+        width: 100%;
+      }
+      .toolbar {
+        justify-content: stretch;
+      }
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+      .brand-copy h1 {
+        font-size: 26px;
+        letter-spacing: 5px;
+      }
     }
+
     @media (max-width: 480px) {
-      .quote-app { padding: 16px 10px 32px; }
-      .logo-box { width: 88px; min-height: 76px; }
-      .logo-box img { max-width: 68px; }
-      .logo-text strong { font-size: 15px; }
-      .logo-text span { font-size: 9px; letter-spacing: 1px; }
-      .brand-copy h1 { font-size: 22px; letter-spacing: 3px; }
-      .action-btn { padding: 10px 12px; font-size: 12.5px; }
+      .quote-app {
+        padding: 16px 10px 32px;
+      }
+      .logo-box {
+        width: 88px;
+        min-height: 76px;
+      }
+      .logo-box img {
+        max-width: 68px;
+      }
+      .logo-text strong {
+        font-size: 15px;
+      }
+      .logo-text span {
+        font-size: 9px;
+        letter-spacing: 1px;
+      }
+      .brand-copy h1 {
+        font-size: 22px;
+        letter-spacing: 3px;
+      }
+      .action-btn {
+        padding: 10px 12px;
+        font-size: 12.5px;
+      }
     }
   </style>
 </head>
@@ -460,9 +545,13 @@
       <div class="quote-header">
         <div class="quote-header-inner">
           <div class="brand-block">
-            <div class="logo-box" id="logoBox">
-              <img src="../images/logo/easyone-logo.jpg" alt="이지원플랫폼 로고" onerror="this.style.display='none';document.getElementById('logoText').style.display='block';">
-              <div class="logo-text" id="logoText" style="display:none;">
+            <div class="logo-box">
+              <img
+                id="brandLogo"
+                src="https://myeuung-afk.github.io/easyone-homepage-assets/images/logo/easyone-logo.jpg?v=20260705"
+                alt="이지원플랫폼 로고"
+              >
+              <div class="logo-text" id="logoText">
                 <strong>이지원플랫폼</strong>
                 <span>EASYONE PLATFORM</span>
               </div>
@@ -480,16 +569,18 @@
           </div>
         </div>
       </div>
+
       <div class="quote-body">
         <div class="info-grid">
           <section class="info-card">
             <h2>■ 공급자 (SUPPLIER)</h2>
             <div class="info-row"><div class="label">상호명</div><div><strong>이지원플랫폼</strong></div></div>
-            <div class="info-row"><div class="label">대표자</div><div id="ownerNameText"><strong>대표자명</strong></div></div>
+            <div class="info-row"><div class="label">대표자</div><div id="ownerNameText">대표자명</div></div>
             <div class="info-row align-top"><div class="label">주소</div><div>전북특별자치도 전주시 완산구<br>전주천서로 473, 5층</div></div>
             <div class="info-row"><div class="label">연락처</div><div><strong>010-5844-1121</strong></div></div>
             <div class="info-row"><div class="label">이메일</div><div id="ownerEmailText">이메일 주소</div></div>
           </section>
+
           <section class="info-card">
             <h2>■ 수신자 (CLIENT)</h2>
             <div class="info-row"><label for="clientName">상호</label><input type="text" id="clientName" placeholder="고객 상호 입력"></div>
@@ -499,9 +590,10 @@
             <div class="info-row"><label for="clientEmail">이메일</label><input type="text" id="clientEmail" placeholder="이메일 (선택)"></div>
           </section>
         </div>
+
         <div class="toolbar">
           <div class="toolbar-group">
-            <button class="action-btn btn-primary" type="button" id="addRowBtn">＋ 항목 추가</button>
+            <button class="action-btn btn-primary" type="button" id="addRowBtn">+ 항목 추가</button>
             <button class="action-btn btn-danger" type="button" id="deleteCheckedBtn">☒ 체크 삭제</button>
             <button class="action-btn btn-neutral" type="button" id="resetBtn">↺ 초기화</button>
           </div>
@@ -509,6 +601,7 @@
             <button class="action-btn btn-print" type="button" id="printBtn">🖨 인쇄 / PDF 저장</button>
           </div>
         </div>
+
         <div class="table-wrap">
           <div class="table-scroll">
             <table>
@@ -527,17 +620,20 @@
             </table>
           </div>
         </div>
+
         <div class="summary-grid">
           <section class="memo-box">
             <label for="quoteMemo">특이사항 / 메모</label>
             <textarea id="quoteMemo" placeholder="견적 관련 특이사항, 협의 내용 등을 입력하세요."></textarea>
           </section>
+
           <section class="totals-card">
             <div class="total-row"><span>공급가액 (소계)</span><strong><span id="subtotal">0</span> 원</strong></div>
             <div class="total-row"><span>부가세 (VAT 10%)</span><strong><span id="vat">0</span> 원</strong></div>
             <div class="total-row"><span>합계 (VAT 포함)</span><strong><span id="total">0</span> 원</strong></div>
           </section>
         </div>
+
         <div class="notice-box">
           <div style="margin-bottom:8px; font-size:13.5px; font-weight:800;">※ 견적 안내</div>
           <div>1. 본 견적서의 유효 기간은 발행일로부터 30일입니다.</div>
@@ -547,12 +643,14 @@
         </div>
       </div>
     </div>
+
     <div class="save-indicator" id="saveIndicator">✓ 자동 저장됨</div>
   </div>
 
   <script>
     (function () {
       var STORAGE_KEY = "easyone_platform_standalone_quote_v2";
+      var LOGO_URL = "https://myeuung-afk.github.io/easyone-homepage-assets/images/logo/easyone-logo.jpg?v=20260705";
       var SUPPLIER_INFO = {
         ownerName: "대표자명",
         ownerEmail: "이메일 주소"
@@ -577,9 +675,12 @@
         "박람회 전시 및 PT 위탁 운영"
       ];
 
-      function $(id) { return document.getElementById(id); }
+      function $(id) {
+        return document.getElementById(id);
+      }
 
       var refs = {
+        app: $("easyoneQuoteApp"),
         bodyRows: $("quoteBodyRows"),
         checkAll: $("checkAll"),
         subtotal: $("subtotal"),
@@ -601,16 +702,14 @@
         resetBtn: $("resetBtn"),
         printBtn: $("printBtn"),
         saveIndicator: $("saveIndicator"),
-        logoBox: $("logoBox")
+        brandLogo: $("brandLogo"),
+        logoText: $("logoText")
       };
 
       var saveTimer = null;
 
-      function formatNumber(value) { return Number(value || 0).toLocaleString("ko-KR"); }
-
-      function applySupplierInfo() {
-        refs.ownerNameText.textContent = SUPPLIER_INFO.ownerName;
-        refs.ownerEmailText.textContent = SUPPLIER_INFO.ownerEmail;
+      function formatNumber(value) {
+        return Number(value || 0).toLocaleString("ko-KR");
       }
 
       function formatDate(date) {
@@ -621,7 +720,8 @@
       }
 
       function generateQuoteNo(date) {
-        return "EOP-" + date.getFullYear() +
+        return "EOP-" +
+          date.getFullYear() +
           String(date.getMonth() + 1).padStart(2, "0") +
           String(date.getDate()).padStart(2, "0") +
           "-" +
@@ -630,15 +730,36 @@
           String(date.getSeconds()).padStart(2, "0");
       }
 
+      function applySupplierInfo() {
+        refs.ownerNameText.textContent = SUPPLIER_INFO.ownerName;
+        refs.ownerEmailText.textContent = SUPPLIER_INFO.ownerEmail;
+      }
+
+      function bindLogoFallback() {
+        refs.brandLogo.onload = function () {
+          refs.brandLogo.style.display = "block";
+          refs.logoText.style.display = "none";
+        };
+        refs.brandLogo.onerror = function () {
+          refs.brandLogo.style.display = "none";
+          refs.logoText.style.display = "block";
+        };
+        refs.brandLogo.src = LOGO_URL;
+      }
+
       function setDefaultMeta(forceNumber) {
         var now = new Date();
-        if (!refs.quoteDate.value) refs.quoteDate.value = formatDate(now);
+        if (!refs.quoteDate.value) {
+          refs.quoteDate.value = formatDate(now);
+        }
         if (!refs.validUntil.value) {
           var valid = new Date(now);
           valid.setDate(valid.getDate() + 30);
           refs.validUntil.value = formatDate(valid);
         }
-        if (forceNumber || !refs.quoteNo.value) refs.quoteNo.value = generateQuoteNo(now);
+        if (forceNumber || !refs.quoteNo.value) {
+          refs.quoteNo.value = generateQuoteNo(now);
+        }
       }
 
       function ensureQuoteNoFormat() {
@@ -713,11 +834,12 @@
             memo: refs.memo.value,
             items: collectRows()
           };
+
           try {
             window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
             showSaveIndicator();
           } catch (error) {
-            console.warn("저장 실패:", error);
+            console.warn("견적 저장 실패:", error);
           }
         }, 250);
       }
@@ -732,6 +854,7 @@
           '<td><input type="number" min="0" class="table-input text-right row-price" placeholder="0"></td>' +
           '<td class="amount-cell">0</td>' +
           '<td><button type="button" class="row-delete-btn">삭제</button></td>';
+
         tr.querySelector(".row-name").value = name || "";
         tr.querySelector(".row-qty").value = qty || "";
         tr.querySelector(".row-price").value = price || "";
@@ -759,7 +882,9 @@
       function addRow() {
         createRow("", "", "");
         var names = refs.bodyRows.querySelectorAll(".row-name");
-        if (names.length) names[names.length - 1].focus();
+        if (names.length) {
+          names[names.length - 1].focus();
+        }
         saveData();
       }
 
@@ -792,7 +917,10 @@
       function loadData() {
         try {
           var raw = window.localStorage.getItem(STORAGE_KEY);
-          if (!raw) return false;
+          if (!raw) {
+            return false;
+          }
+
           var data = JSON.parse(raw);
           refs.bodyRows.innerHTML = "";
           refs.quoteNo.value = data.quoteNo || "";
@@ -804,6 +932,7 @@
           refs.clientAddr.value = data.clientAddr || "";
           refs.clientEmail.value = data.clientEmail || "";
           refs.memo.value = data.memo || "";
+
           if (Array.isArray(data.items) && data.items.length) {
             for (var i = 0; i < data.items.length; i++) {
               createRow(data.items[i].name || "", data.items[i].qty || "", data.items[i].price || "");
@@ -813,6 +942,7 @@
               createRow(defaultItems[j], "", "");
             }
           }
+
           setDefaultMeta(false);
           ensureQuoteNoFormat();
           calculateAll();
@@ -824,12 +954,16 @@
       }
 
       function resetAll() {
-        if (!window.confirm("모든 입력 내용을 초기화하시겠습니까?\n(로고 및 저장 데이터가 모두 삭제됩니다)")) return;
+        if (!window.confirm("모든 입력 내용을 초기화하시겠습니까?\n(저장 데이터가 모두 삭제됩니다)")) {
+          return;
+        }
+
         try {
           window.localStorage.removeItem(STORAGE_KEY);
         } catch (error) {
           console.warn("초기화 실패:", error);
         }
+
         refs.bodyRows.innerHTML = "";
         refs.checkAll.checked = false;
         refs.quoteNo.value = "";
@@ -841,6 +975,7 @@
         refs.clientAddr.value = "";
         refs.clientEmail.value = "";
         refs.memo.value = "";
+
         setDefaultMeta(true);
         for (var i = 0; i < defaultItems.length; i++) {
           createRow(defaultItems[i], "", "");
@@ -850,19 +985,28 @@
       }
 
       function buildPrintHtml() {
-        var clone = document.getElementById("easyoneQuoteApp").cloneNode(true);
+        var clone = refs.app.cloneNode(true);
         var styleTag = document.querySelector("style");
         var styleHtml = styleTag ? styleTag.outerHTML : "";
         var selectorsToRemove = [".toolbar", "#saveIndicator", "th:first-child", "th:last-child"];
+
         for (var i = 0; i < selectorsToRemove.length; i++) {
           var removeNodes = clone.querySelectorAll(selectorsToRemove[i]);
-          for (var j = 0; j < removeNodes.length; j++) removeNodes[j].remove();
+          for (var j = 0; j < removeNodes.length; j++) {
+            removeNodes[j].remove();
+          }
         }
+
         var rows = clone.querySelectorAll("tbody tr");
         for (var r = 0; r < rows.length; r++) {
-          if (rows[r].children[0]) rows[r].children[0].remove();
-          if (rows[r].children[rows[r].children.length - 1]) rows[r].children[rows[r].children.length - 1].remove();
+          if (rows[r].children[0]) {
+            rows[r].children[0].remove();
+          }
+          if (rows[r].children[rows[r].children.length - 1]) {
+            rows[r].children[rows[r].children.length - 1].remove();
+          }
         }
+
         var fields = clone.querySelectorAll("input, textarea");
         for (var k = 0; k < fields.length; k++) {
           var field = fields[k];
@@ -870,6 +1014,7 @@
             field.remove();
             continue;
           }
+
           var replacement;
           if (field.tagName === "TEXTAREA") {
             replacement = document.createElement("div");
@@ -883,14 +1028,24 @@
             replacement.style.minWidth = "60px";
             replacement.textContent = field.value || "";
           }
+
           field.parentNode.replaceChild(replacement, field);
         }
+
         clone.style.padding = "0";
         clone.style.background = "#ffffff";
-        return "<!DOCTYPE html><html lang='ko'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>" + getPrintTitle() + "</title>" + styleHtml + "<style>html,body{margin:0;padding:0;background:#ffffff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}body{min-height:auto;font-family:\"Pretendard\",\"Malgun Gothic\",sans-serif;}#easyoneQuoteApp{padding:0 !important;background:#ffffff !important;}.quote-shell{max-width:none !important;margin:0 !important;box-shadow:none !important;}table{min-width:0 !important;}tbody tr:hover td{background:inherit !important;}</style></head><body>" + clone.outerHTML + "</body></html>";
+
+        return "<!DOCTYPE html><html lang='ko'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>" +
+          getPrintTitle() +
+          "</title>" +
+          styleHtml +
+          "<style>html,body{margin:0;padding:0;background:#ffffff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}body{min-height:auto;font-family:\"Pretendard\",\"Malgun Gothic\",sans-serif;}#easyoneQuoteApp{padding:0 !important;background:#ffffff !important;}.quote-shell{max-width:none !important;margin:0 !important;box-shadow:none !important;border-radius:0 !important;}table{min-width:0 !important;}tbody tr:hover td{background:inherit !important;}</style></head><body>" +
+          clone.outerHTML +
+          "</body></html>";
       }
 
       function printQuote() {
+        document.title = getPrintTitle();
         try {
           var printWindow = window.open("", "_blank", "width=1100,height=900");
           if (printWindow) {
@@ -898,7 +1053,9 @@
             printWindow.document.write(buildPrintHtml());
             printWindow.document.close();
             printWindow.focus();
-            setTimeout(function () { printWindow.print(); }, 300);
+            setTimeout(function () {
+              printWindow.print();
+            }, 300);
             return;
           }
         } catch (error) {
@@ -909,10 +1066,17 @@
 
       function bindFieldAutosave() {
         var ids = ["quoteNo", "quoteDate", "validUntil", "clientName", "clientPerson", "clientPhone", "clientAddr", "clientEmail", "quoteMemo"];
-        for (var i = 0; i < ids.length; i++) $(ids[i]).addEventListener("input", saveData);
+        for (var i = 0; i < ids.length; i++) {
+          $(ids[i]).addEventListener("input", function () {
+            document.title = getPrintTitle();
+            saveData();
+          });
+        }
       }
 
       applySupplierInfo();
+      bindLogoFallback();
+
       refs.addRowBtn.addEventListener("click", addRow);
       refs.deleteCheckedBtn.addEventListener("click", deleteCheckedRows);
       refs.resetBtn.addEventListener("click", resetAll);
@@ -924,14 +1088,14 @@
       var loaded = loadData();
       if (!loaded) {
         setDefaultMeta(true);
-        for (var i = 0; i < defaultItems.length; i++) createRow(defaultItems[i], "", "");
+        for (var i = 0; i < defaultItems.length; i++) {
+          createRow(defaultItems[i], "", "");
+        }
         calculateAll();
       }
+
       ensureQuoteNoFormat();
       document.title = getPrintTitle();
-      refs.quoteNo.addEventListener("input", function () {
-        document.title = getPrintTitle();
-      });
     })();
   </script>
 </body>

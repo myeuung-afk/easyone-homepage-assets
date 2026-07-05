@@ -86,9 +86,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 140px;
-      min-height: 112px;
-      padding: 14px 12px;
+      width: 112px;
+      min-height: 92px;
+      padding: 10px 8px;
       overflow: hidden;
       border: 2px solid rgba(255, 255, 255, 0.3);
       border-radius: 20px;
@@ -517,8 +517,8 @@
         padding: 16px 10px 32px;
       }
       .logo-box {
-        width: 104px;
-        min-height: 88px;
+        width: 92px;
+        min-height: 78px;
       }
       .logo-box img {
         width: 132%;
@@ -652,6 +652,7 @@
   <script>
     (function () {
       var STORAGE_KEY = "easyone_platform_standalone_quote_v2";
+      var SESSION_FRESH_KEY = "easyone_quote_fresh_session";
       var LOGO_URL = "https://myeuung-afk.github.io/easyone-homepage-assets/images/logo/easyone-logo.jpg?v=20260705";
       var SUPPLIER_INFO = {
         ownerName: "대표자명",
@@ -689,6 +690,20 @@
 
         var referrer = document.referrer || "";
         return referrer.indexOf("easyonepf.page24.app") !== -1 || referrer.indexOf("page24.app") !== -1;
+      }
+
+      function markFreshSession() {
+        try {
+          window.sessionStorage.setItem(SESSION_FRESH_KEY, "1");
+        } catch (error) {}
+      }
+
+      function hasFreshSession() {
+        try {
+          return window.sessionStorage.getItem(SESSION_FRESH_KEY) === "1";
+        } catch (error) {
+          return false;
+        }
       }
 
       function clearFreshFlagFromUrl() {
@@ -941,7 +956,12 @@
             window.localStorage.removeItem("easyone_platform_standalone_quote_v1");
             window.localStorage.removeItem(STORAGE_KEY);
             window.localStorage.removeItem("easyone_page24_quote_v4");
+            markFreshSession();
             clearFreshFlagFromUrl();
+            return false;
+          }
+
+          if (hasFreshSession()) {
             return false;
           }
 

@@ -72,53 +72,35 @@
       flex-wrap: wrap;
     }
     .logo-box {
-      position: relative;
-      width: 92px;
-      height: 92px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 112px;
+      min-height: 92px;
+      padding: 12px 10px;
       overflow: hidden;
       border: 2px solid rgba(255, 255, 255, 0.3);
       border-radius: 20px;
       background: rgba(255, 255, 255, 0.97);
       box-shadow: 0 10px 24px rgba(12, 26, 58, 0.18);
-      cursor: pointer;
     }
-    .logo-placeholder, .logo-box img { width: 100%; height: 100%; }
-    .logo-placeholder {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+    .logo-text {
       text-align: center;
       color: var(--navy-800);
-      font-size: 11px;
-      font-weight: 700;
-      line-height: 1.35;
+      line-height: 1.2;
     }
-    .logo-placeholder strong {
-      font-size: 28px;
-      line-height: 1;
+    .logo-text strong {
+      display: block;
       margin-bottom: 4px;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
     }
-    .logo-box img {
-      display: none;
-      object-fit: contain;
-      background: #ffffff;
-    }
-    .logo-remove {
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      display: none;
-      width: 24px;
-      height: 24px;
-      border: 0;
-      border-radius: 999px;
-      background: #dc2626;
-      color: #ffffff;
-      font-size: 14px;
+    .logo-text span {
+      display: block;
+      font-size: 10px;
       font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 6px 14px rgba(127, 29, 29, 0.25);
+      letter-spacing: 1.4px;
     }
     .brand-copy small {
       display: block;
@@ -394,6 +376,56 @@
       transition: opacity 0.25s ease, transform 0.25s ease;
     }
     .hidden-file { display: none; }
+    @page {
+      size: A4;
+      margin: 10mm;
+    }
+    @media print {
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: #ffffff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      body {
+        min-height: auto;
+      }
+      .quote-app {
+        padding: 0 !important;
+        background: #ffffff !important;
+      }
+      .quote-shell {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        box-shadow: none;
+      }
+      .toolbar,
+      .save-indicator,
+      th:first-child,
+      th:last-child,
+      td:first-child,
+      td:last-child {
+        display: none !important;
+      }
+      table {
+        min-width: 0;
+      }
+      tbody tr:hover td {
+        background: inherit !important;
+      }
+      .quote-header,
+      th,
+      .total-row:last-child,
+      .notice-box,
+      .info-card,
+      .memo-box,
+      .totals-card {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
     @media (max-width: 900px) { .summary-grid { grid-template-columns: 1fr; } }
     @media (max-width: 768px) {
       .quote-header { padding: 24px 20px; }
@@ -406,7 +438,9 @@
     }
     @media (max-width: 480px) {
       .quote-app { padding: 16px 10px 32px; }
-      .logo-box { width: 76px; height: 76px; }
+      .logo-box { width: 88px; min-height: 76px; }
+      .logo-text strong { font-size: 15px; }
+      .logo-text span { font-size: 9px; letter-spacing: 1px; }
       .brand-copy h1 { font-size: 22px; letter-spacing: 3px; }
       .action-btn { padding: 10px 12px; font-size: 12.5px; }
     }
@@ -414,15 +448,15 @@
 </head>
 <body>
   <div class="quote-app" id="easyoneQuoteApp">
-    <input class="hidden-file" type="file" id="logoInput" accept="image/*">
     <div class="quote-shell">
       <div class="quote-header">
         <div class="quote-header-inner">
           <div class="brand-block">
-            <div class="logo-box" id="logoBox" title="로고 업로드">
-              <div class="logo-placeholder" id="logoPlaceholder"><strong>+</strong>로고<br>업로드</div>
-              <img id="logoImage" alt="업로드 로고">
-              <button class="logo-remove" type="button" id="logoRemoveBtn" title="로고 삭제">×</button>
+            <div class="logo-box" id="logoBox">
+              <div class="logo-text" id="logoText">
+                <strong>이지원플랫폼</strong>
+                <span>EASYONE PLATFORM</span>
+              </div>
             </div>
             <div class="brand-copy">
               <small>EASYONE PLATFORM QUOTATION</small>
@@ -554,11 +588,7 @@
         resetBtn: $("resetBtn"),
         printBtn: $("printBtn"),
         saveIndicator: $("saveIndicator"),
-        logoInput: $("logoInput"),
-        logoBox: $("logoBox"),
-        logoImage: $("logoImage"),
-        logoPlaceholder: $("logoPlaceholder"),
-        logoRemoveBtn: $("logoRemoveBtn")
+        logoBox: $("logoBox")
       };
 
       var saveTimer = null;
@@ -573,10 +603,13 @@
       }
 
       function generateQuoteNo(date) {
-        return "EZP-" + date.getFullYear() +
+        return "EOP-" + date.getFullYear() +
           String(date.getMonth() + 1).padStart(2, "0") +
           String(date.getDate()).padStart(2, "0") +
-          "-" + String(Math.floor(Math.random() * 900) + 100);
+          "-" +
+          String(date.getHours()).padStart(2, "0") +
+          String(date.getMinutes()).padStart(2, "0") +
+          String(date.getSeconds()).padStart(2, "0");
       }
 
       function setDefaultMeta(forceNumber) {
@@ -640,7 +673,6 @@
         clearTimeout(saveTimer);
         saveTimer = setTimeout(function () {
           var data = {
-            logo: refs.logoImage.style.display !== "none" ? refs.logoImage.src : "",
             quoteNo: refs.quoteNo.value,
             quoteDate: refs.quoteDate.value,
             validUntil: refs.validUntil.value,
@@ -730,38 +762,6 @@
         }
       }
 
-      function setLogo(dataUrl) {
-        refs.logoImage.src = dataUrl;
-        refs.logoImage.style.display = "block";
-        refs.logoPlaceholder.style.display = "none";
-        refs.logoRemoveBtn.style.display = "block";
-      }
-
-      function removeLogo() {
-        refs.logoInput.value = "";
-        refs.logoImage.src = "";
-        refs.logoImage.style.display = "none";
-        refs.logoPlaceholder.style.display = "flex";
-        refs.logoRemoveBtn.style.display = "none";
-        saveData();
-      }
-
-      function uploadLogo(event) {
-        var file = event.target.files && event.target.files[0];
-        if (!file) return;
-        if (file.size > 2 * 1024 * 1024) {
-          alert("로고 이미지는 2MB 이하로 업로드해주세요.");
-          refs.logoInput.value = "";
-          return;
-        }
-        var reader = new FileReader();
-        reader.onload = function (loadEvent) {
-          setLogo(loadEvent.target.result);
-          saveData();
-        };
-        reader.readAsDataURL(file);
-      }
-
       function loadData() {
         try {
           var raw = window.localStorage.getItem(STORAGE_KEY);
@@ -779,7 +779,6 @@
           refs.clientAddr.value = data.clientAddr || "";
           refs.clientEmail.value = data.clientEmail || "";
           refs.memo.value = data.memo || "";
-          if (data.logo) setLogo(data.logo);
           if (Array.isArray(data.items) && data.items.length) {
             for (var i = 0; i < data.items.length; i++) {
               createRow(data.items[i].name || "", data.items[i].qty || "", data.items[i].price || "");
@@ -818,7 +817,6 @@
         refs.clientAddr.value = "";
         refs.clientEmail.value = "";
         refs.memo.value = "";
-        removeLogo();
         setDefaultMeta(true);
         for (var i = 0; i < defaultItems.length; i++) {
           createRow(defaultItems[i], "", "");
@@ -829,7 +827,7 @@
 
       function buildPrintHtml() {
         var clone = document.getElementById("easyoneQuoteApp").cloneNode(true);
-        var selectorsToRemove = ["#logoInput", "#saveIndicator", ".toolbar", ".logo-remove", "th:first-child", "th:last-child"];
+        var selectorsToRemove = [".toolbar", "#saveIndicator", "th:first-child", "th:last-child"];
         for (var i = 0; i < selectorsToRemove.length; i++) {
           var removeNodes = clone.querySelectorAll(selectorsToRemove[i]);
           for (var j = 0; j < removeNodes.length; j++) removeNodes[j].remove();
@@ -842,7 +840,7 @@
         var fields = clone.querySelectorAll("input, textarea");
         for (var k = 0; k < fields.length; k++) {
           var field = fields[k];
-          if (field.type === "checkbox" || field.type === "file") {
+          if (field.type === "checkbox") {
             field.remove();
             continue;
           }
@@ -863,7 +861,7 @@
         }
         clone.style.padding = "0";
         clone.style.background = "#ffffff";
-        return "<!DOCTYPE html><html lang='ko'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>이지원플랫폼 견적서</title></head><body style='margin:0; padding:16px; background:#ffffff;'>" + clone.outerHTML + "</body></html>";
+        return "<!DOCTYPE html><html lang='ko'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>이지원플랫폼 견적서</title><style>@page{size:A4;margin:10mm;}html,body{margin:0;padding:0;background:#ffffff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}body{min-height:auto;font-family:\"Pretendard\",\"Malgun Gothic\",sans-serif;}*{-webkit-print-color-adjust:exact;print-color-adjust:exact;box-sizing:border-box;}table{min-width:0 !important;}tbody tr:hover td{background:inherit !important;}</style></head><body>" + clone.outerHTML + "</body></html>";
       }
 
       function printQuote() {
@@ -888,12 +886,6 @@
         for (var i = 0; i < ids.length; i++) $(ids[i]).addEventListener("input", saveData);
       }
 
-      refs.logoBox.addEventListener("click", function () { refs.logoInput.click(); });
-      refs.logoRemoveBtn.addEventListener("click", function (event) {
-        event.stopPropagation();
-        if (window.confirm("로고를 삭제하시겠습니까?")) removeLogo();
-      });
-      refs.logoInput.addEventListener("change", uploadLogo);
       refs.addRowBtn.addEventListener("click", addRow);
       refs.deleteCheckedBtn.addEventListener("click", deleteCheckedRows);
       refs.resetBtn.addEventListener("click", resetAll);
